@@ -12,7 +12,7 @@ module Graphiti
       aliases: ["-c"],
       desc: "Generate without documentation comments"
 
-    class_option :'namespace_controllers',
+    class_option :'namespace-controllers',
       type: :boolean,
       default: false,
       aliases: ["-n"],
@@ -73,6 +73,10 @@ module Graphiti
 
     def omit_comments?
       @options["omit-comments"]
+    end
+
+    def namespace_controllers?
+      @options["namespace-controllers"]
     end
 
     def app_controller_code
