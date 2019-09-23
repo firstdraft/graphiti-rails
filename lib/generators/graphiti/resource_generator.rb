@@ -35,7 +35,9 @@ module Graphiti
     desc "This generator creates a resource file at app/resources, as well as corresponding controller/specs/route/etc"
     def generate_all
       generate_model
-      generate_controller
+      unless skip_controller?
+        generate_controller
+      end
       generate_application_resource unless application_resource_defined?
       generate_route
       generate_resource
