@@ -25,6 +25,22 @@ module Graphiti
       end
     end
 
+    def clean_namespace
+      api_namespace.gsub(/^\/|\/$/,"")
+    end
+
+    def controller_namespaces_path
+      clean_namespace.split("/")
+    end
+
+    def controller_class_namespace
+      output = ""
+      controller_namespaces_path.each do |beep|
+        output += beep.capitalize + "::"
+      end
+      output
+    end
+
     def actions
       @options["actions"] || %w[index show create update destroy]
     end
