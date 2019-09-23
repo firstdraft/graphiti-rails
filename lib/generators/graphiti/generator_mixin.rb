@@ -25,6 +25,15 @@ module Graphiti
       end
     end
 
+    def namespace_controllers?
+      @namespace_controllers ||= begin
+        unless graphiti_config["namespace-controllers"] || !@options["namespace-controllers"]
+          update_config!("namespace-controllers" => @options["namespace-controllers"] )
+        end
+        graphiti_config["namespace-controllers"]
+      end
+    end
+
     def clean_namespace
       api_namespace.gsub(/^\/|\/$/,"")
     end

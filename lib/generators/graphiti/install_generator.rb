@@ -68,10 +68,6 @@ module Graphiti
       @options["omit-comments"]
     end
 
-    def namespace_controllers?
-      @options["namespace-controllers"]
-    end
-
     def app_controller_code
       str = ""
       if defined?(::Responders)
