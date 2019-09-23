@@ -12,6 +12,12 @@ module Graphiti
       aliases: ["-c"],
       desc: "Generate without documentation comments"
 
+    class_option :'namespace_controllers',
+      type: :boolean,
+      default: false,
+      aliases: ["-n"],
+      desc: "Generated controllers will be namespaced"
+
     desc "This generator boostraps graphiti"
     def install
       to = File.join("app/resources", "application_resource.rb")
