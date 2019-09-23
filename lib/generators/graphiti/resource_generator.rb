@@ -106,7 +106,7 @@ module Graphiti
       end
       if attributes_class.table_exists?
         return attributes_class.columns.map do |c|
-          OpenStruct.new({name: c.name.to_sym, type: c.type})
+          OpenStruct.new({name: c.name.to_sym, type: c.type == :text ? :string : c.type})
         end
       else
         raise "#{attributes_class} table must exist. Please run migrations."
