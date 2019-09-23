@@ -26,6 +26,12 @@ module Graphiti
       aliases: ["--model", "-m"],
       desc: "Specify to use attributes from a particular model"
 
+    class_option :'skip-controller',
+      type: :boolean,
+      default: false,
+      aliases: ["--skip-controller"],
+      desc: "Skip the controller generator"
+
     desc "This generator creates a resource file at app/resources, as well as corresponding controller/specs/route/etc"
     def generate_all
       generate_model
@@ -62,6 +68,10 @@ module Graphiti
 
     def omit_comments?
       @options["omit-comments"]
+    end
+
+    def skip_controller?
+      @options["skip-controller"]
     end
 
     def attributes_class
