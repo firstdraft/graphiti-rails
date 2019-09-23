@@ -53,7 +53,8 @@ module Graphiti
 
       insert_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
           <<-STR
-  scope path: ApplicationResource.endpoint_namespace, defaults: { format: :jsonapi } do
+  scope path: ApplicationResource.endpoint_namespace, defaults: { format: :jsonapi }\
+#{", module: \"#{clean_namespace}\"" if namespace_controllers?} do
     # your routes go here\
 #{"\n\t\tmount VandalUi::Engine, at: '/vandal'" if defined?(VandalUi)}
   end
