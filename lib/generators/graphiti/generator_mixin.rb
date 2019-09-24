@@ -27,7 +27,7 @@ module Graphiti
 
     def namespace_controllers?
       @namespace_controllers ||= begin
-        unless graphiti_config["namespace-controllers"] || !@options["namespace-controllers"]
+        if graphiti_config["namespace-controllers"].blank?
           update_config!("namespace-controllers" => @options["namespace-controllers"] )
         end
         graphiti_config["namespace-controllers"]
@@ -42,12 +42,14 @@ module Graphiti
       clean_namespace.split("/")
     end
 
-    def controller_class_namespace
-      output = ""
-      controller_namespaces_path.each do |beep|
-        output += beep.capitalize + "::"
+    def controller_modules
+      if namespace_controllers?
+        output = ""
+        controller_namespaces_path.each do |mod|
+          output += mod.capitalize + "::"
+        end
+        output
       end
-      output
     end
 
     def actions

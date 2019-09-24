@@ -23,12 +23,21 @@ module Graphiti
       to = File.join("app/resources", "application_resource.rb")
       template("application_resource.rb.erb", to)
 
-      inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::API\n" do
-        app_controller_code
-      end
+      if namespace_controllers?
+        to = File.join(
+          "app/controllers",
+          (controller_namespaces_path if namespace_controllers?),
+          "graphiti_controller.rb"
+        )
+        template("graphiti_controller.rb.erb", to)
+      else
+        inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::API\n" do
+          app_controller_code
+        end
 
-      inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base\n" do
-        app_controller_code
+        inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base\n" do
+          app_controller_code
+        end
       end
 
       inject_into_file "config/application.rb", after: "Rails::Application\n" do

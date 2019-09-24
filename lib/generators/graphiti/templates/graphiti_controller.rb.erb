@@ -1,0 +1,3 @@
+class <%= controller_modules%>GraphitiController < ActionController::<%= Rails.application.config.api_only ? "API" : "Base" %>
+  include Graphiti::Rails::Responders
+end
