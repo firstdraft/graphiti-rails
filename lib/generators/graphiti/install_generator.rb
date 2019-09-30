@@ -3,8 +3,12 @@ require_relative "generator_mixin"
 module Graphiti
   class InstallGenerator < ::Rails::Generators::Base
     include GeneratorMixin
-
     source_root File.expand_path("templates", __dir__)
+
+    class_option :'api-namespace',
+      type: :string,
+      default: "/api/v1",
+      desc: "Override namespace for API controller & routes"
 
     class_option :'omit-comments',
       type: :boolean,

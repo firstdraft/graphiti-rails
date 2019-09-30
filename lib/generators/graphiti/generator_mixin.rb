@@ -10,28 +10,11 @@ module Graphiti
     end
 
     def api_namespace
-      @api_namespace ||= begin
-        ns = graphiti_config["namespace"]
-
-        if ns.blank?
-          ns = prompt \
-            header: "What is your API namespace?",
-            description: "This will be used as a route prefix, e.g. if you want the route '/books_api/v1/authors' your namespace would be '/books_api/v1'",
-            default: "/api/v1"
-          update_config!("namespace" => ns)
-        end
-
-        ns
-      end
+      @api_namespace ||= (graphiti_config["namespace"] || @options["namespace"])
     end
 
     def namespace_controllers?
-      @namespace_controllers ||= begin
-        if graphiti_config["namespace-controllers"].blank?
-          update_config!("namespace-controllers" => @options["namespace-controllers"] )
-        end
-        graphiti_config["namespace-controllers"]
-      end
+      @namespace_controllers ||= (graphiti_config["namespace-controllers"] || @options["namespace-controllers"])
     end
 
     def clean_namespace
