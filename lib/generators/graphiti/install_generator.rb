@@ -23,14 +23,19 @@ module Graphiti
       desc: "Generated controllers will be namespaced"
 
     desc "This generator boostraps graphiti"
+
     def install
+      if behavior == :invoke
+        generate_or_destroy_graphiticfg
+      end
+
       to = File.join("app/resources", "application_resource.rb")
       template("application_resource.rb.erb", to)
 
       if namespace_controllers?
         to = File.join(
           "app/controllers",
-          (controller_namespaces_path if namespace_controllers?),
+          controller_namespaces_path,
           "graphiti_controller.rb"
         )
         template("graphiti_controller.rb.erb", to)
@@ -73,6 +78,10 @@ module Graphiti
   end
           STR
       end
+
+      if behavior == :revoke
+        generate_or_destroy_graphiticfg
+      end
     end
 
     private
@@ -87,6 +96,10 @@ module Graphiti
         str << "  include Graphiti::Rails::Responders\n"
       end
       str
+    end
+
+    def generate_or_destroy_graphiticfg
+      template("graphiticfg.yml.erb", ".graphiticfg.yml")
     end
   end
 end
