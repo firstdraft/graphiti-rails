@@ -12,17 +12,32 @@ module Graphiti
       aliases: ["-c"],
       desc: "Generate without documentation comments"
 
+    class_option :'namespace-controllers',
+      type: :boolean,
+      default: false,
+      aliases: ["-n"],
+      desc: "Generated controllers will be namespaced"
+
     desc "This generator boostraps graphiti"
     def install
       to = File.join("app/resources", "application_resource.rb")
       template("application_resource.rb.erb", to)
 
-      inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::API\n" do
-        app_controller_code
-      end
+      if namespace_controllers?
+        to = File.join(
+          "app/controllers",
+          (controller_namespaces_path if namespace_controllers?),
+          "graphiti_controller.rb"
+        )
+        template("graphiti_controller.rb.erb", to)
+      else
+        inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::API\n" do
+          app_controller_code
+        end
 
-      inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base\n" do
-        app_controller_code
+        inject_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base\n" do
+          app_controller_code
+        end
       end
 
       inject_into_file "config/application.rb", after: "Rails::Application\n" do
@@ -46,20 +61,13 @@ module Graphiti
       end
 
       insert_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
-        if defined?(VandalUi)
           <<-STR
-  scope path: ApplicationResource.endpoint_namespace, defaults: { format: :jsonapi } do
-    mount VandalUi::Engine, at: '/vandal'
-    # your routes go here
+  scope path: ApplicationResource.endpoint_namespace, defaults: { format: :jsonapi }\
+#{", module: \"#{clean_namespace}\"" if namespace_controllers?} do
+    # your routes go here\
+#{"\n\t\tmount VandalUi::Engine, at: '/vandal'" if defined?(VandalUi)}
   end
           STR
-        else
-          <<-STR
-  scope path: ApplicationResource.endpoint_namespace, defaults: { format: :jsonapi } do
-    # your routes go here
-  end
-          STR
-        end
       end
     end
 

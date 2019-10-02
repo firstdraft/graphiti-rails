@@ -25,6 +25,33 @@ module Graphiti
       end
     end
 
+    def namespace_controllers?
+      @namespace_controllers ||= begin
+        if graphiti_config["namespace-controllers"].blank?
+          update_config!("namespace-controllers" => @options["namespace-controllers"] )
+        end
+        graphiti_config["namespace-controllers"]
+      end
+    end
+
+    def clean_namespace
+      api_namespace.gsub(/^\/|\/$/,"")
+    end
+
+    def controller_namespaces_path
+      clean_namespace.split("/")
+    end
+
+    def controller_modules
+      if namespace_controllers?
+        output = ""
+        controller_namespaces_path.each do |mod|
+          output += mod.capitalize + "::"
+        end
+        output
+      end
+    end
+
     def actions
       @options["actions"] || %w[index show create update destroy]
     end

@@ -26,10 +26,16 @@ module Graphiti
       aliases: ["--model", "-m"],
       desc: "Specify to use attributes from a particular model"
 
+    class_option :'skip-controller',
+      type: :boolean,
+      default: false,
+      aliases: ["--skip-controller"],
+      desc: "Skip the controller generator"
+
     desc "This generator creates a resource file at app/resources, as well as corresponding controller/specs/route/etc"
     def generate_all
       generate_model
-      generate_controller
+      generate_controller unless skip_controller?
       generate_application_resource unless application_resource_defined?
       generate_route
       generate_resource
@@ -64,6 +70,10 @@ module Graphiti
       @options["omit-comments"]
     end
 
+    def skip_controller?
+      @options["skip-controller"]
+    end
+
     def attributes_class
       return @attributes_class if @attributes_class
 
@@ -94,7 +104,8 @@ module Graphiti
       end
       if attributes_class.table_exists?
         return attributes_class.columns.map do |c|
-          OpenStruct.new({name: c.name.to_sym, type: c.type})
+          column_type = (c.type == :text ? :string : c.type)
+          OpenStruct.new(name: c.name.to_sym, type: column_type )
         end
       else
         raise "#{attributes_class} table must exist. Please run migrations."
@@ -117,7 +128,7 @@ module Graphiti
     end
 
     def generate_controller
-      to = File.join("app/controllers", class_path, "#{file_name.pluralize}_controller.rb")
+      to = File.join("app/controllers", namespace_controllers? ? controller_namespaces_path : class_path, "#{file_name.pluralize}_controller.rb")
       template("controller.rb.erb", to)
     end
 
