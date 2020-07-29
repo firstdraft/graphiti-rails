@@ -32,7 +32,7 @@ module Graphiti
         RUBY
       end
 
-      if defined?(RSpec)
+      if defined?(RSpec) && File.exists?("spec/rails_helper.rb")
         inject_into_file "spec/rails_helper.rb", after: /RSpec.configure.+^end$/m do
           "\n\nGraphitiSpecHelpers::RSpec.schema!"
         end
